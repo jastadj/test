@@ -13,6 +13,7 @@ public:
 
     //flags
     bool m_Walkable;
+    bool m_Lightable;
 };
 
 #endif // CLASS_MAPTILE

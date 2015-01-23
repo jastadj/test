@@ -7,4 +7,5 @@ MapTile::MapTile()
 
     //flags
     m_Walkable = true;
+    m_Lightable = true;
 }
