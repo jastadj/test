@@ -1,0 +1,52 @@
+# depslib dependency file v1.0
+1422025854 source:c:\documents and settings\jjastad\my documents\codeblocks\projects\test\main.cpp
+	<cstdlib>
+	"engine.hpp"
+
+1216149206 c:\documents and settings\jjastad\my documents\codeblocks\curses_s\include\curses.h
+	<stdarg.h>
+	<stddef.h>
+	<stdio.h>
+	<wchar.h>
+
+1422026555 c:\documents and settings\jjastad\my documents\codeblocks\projects\test\engine.hpp
+	<cstdlib>
+	<iostream>
+	<string>
+	<curses.h>
+	<time.h>
+	"map.hpp"
+	"player.hpp"
+
+1422027614 source:c:\documents and settings\jjastad\my documents\codeblocks\projects\test\engine.cpp
+	"engine.hpp"
+	"colors.hpp"
+
+1422026150 c:\documents and settings\jjastad\my documents\codeblocks\projects\test\map.hpp
+	<curses.h>
+	<cstdlib>
+	<vector>
+	"maptile.hpp"
+
+1422027662 source:c:\documents and settings\jjastad\my documents\codeblocks\projects\test\map.cpp
+	"map.hpp"
+
+1417643519 c:\documents and settings\jjastad\my documents\codeblocks\projects\test\colors.hpp
+
+1421940762 source:c:\documents and settings\jjastad\my documents\codeblocks\projects\test\common.cpp
+	"common.hpp"
+
+1421957862 c:\documents and settings\jjastad\my documents\codeblocks\projects\test\common.hpp
+
+1421941906 source:c:\documents and settings\jjastad\my documents\codeblocks\projects\test\player.cpp
+	"player.hpp"
+
+1421942736 c:\documents and settings\jjastad\my documents\codeblocks\projects\test\player.hpp
+	"common.hpp"
+
+1422027594 c:\documents and settings\jjastad\my documents\codeblocks\projects\test\maptile.hpp
+	<curses.h>
+
+1422027594 source:c:\documents and settings\jjastad\my documents\codeblocks\projects\test\maptile.cpp
+	"maptile.hpp"
+

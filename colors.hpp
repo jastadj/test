@@ -1,0 +1,6 @@
+#ifndef _COLORS_HPP
+#define _COLORS_HPP
+
+enum _COLORS {BLANK_C, DEFAULT_COLOR, RED, GREEN, BLUE};
+
+#endif // _COLORS
