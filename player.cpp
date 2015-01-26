@@ -7,3 +7,20 @@ Player::Player()
 
     m_visRadius = 2;
 }
+
+void Player::addItem(ItemInstance *nitem)
+{
+    m_Inventory.push_back(nitem);
+}
+
+void Player::removeItem(ItemInstance *nitem)
+{
+    for(int i = int(m_Inventory.size()-1); i >= 0; i--)
+    {
+        if(m_Inventory[i] == nitem)
+        {
+            m_Inventory.erase(m_Inventory.begin() + i);
+            return;
+        }
+    }
+}

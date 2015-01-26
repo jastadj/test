@@ -17,6 +17,7 @@ private:
     void initCurses();
     void initColors();
     void initTiles();
+    void initItems();
 
     void newGame();
     void initMap();
@@ -33,12 +34,19 @@ private:
 
     //objects
     std::vector<MapTile> m_Tiles;
+    std::vector<Item> m_Items;
     std::vector<Map> m_Maps;
     Map *m_currentMap;
     Player *m_Player;
 
-    //
+    //mob/player actions
     vector2i moveDirection(vector2i startpos, int dir);
+    void PlayerGetItem();
+    void PlayerDropItem();
+
+    //debug
+    void d_showmapitems();
+    void d_showplayeritems();
 
 public:
     Engine();

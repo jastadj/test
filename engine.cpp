@@ -12,6 +12,7 @@ void Engine::start()
     initCurses();
     initColors();
     initTiles();
+    initItems();
 
     //set map window dimensions
     m_MapWindow.x = 0;
@@ -47,6 +48,7 @@ void Engine::initColors()
     init_pair(RED, COLOR_RED, COLOR_BLACK);
     init_pair(GREEN, COLOR_GREEN, COLOR_BLACK);
     init_pair(BLUE, COLOR_BLUE, COLOR_BLACK);
+    init_pair(YELLOW, COLOR_YELLOW, COLOR_BLACK);
 }
 
 void Engine::initTiles()
@@ -68,6 +70,16 @@ void Engine::initTiles()
     newtile.m_Character = '.';
     m_Tiles.push_back(newtile);
 
+
+}
+
+void Engine::initItems()
+{
+    Item newitem("rock", '*', 1);
+    m_Items.push_back(newitem);
+
+    newitem = Item("food", '%', YELLOW);
+    m_Items.push_back(newitem);
 
 }
 ////////////////////////////////////////////////////////////////////////////
@@ -97,6 +109,22 @@ void Engine::initMap()
 
     //set current map as first map
     m_currentMap = &m_Maps[0];
+
+    //test
+    //add some random items to current map
+    //add some random items
+    clear();
+    for(int i = 0; i < 5; i++)
+    {
+        int x = rand()%m_currentMap->getWidth();
+        int y = rand()%m_currentMap->getHeight();
+
+        if( m_Tiles[m_currentMap->getMapTile(x,y)].m_Walkable)
+        {
+            ItemInstance *newitem = new ItemInstance(&m_Items[rand()%2], x, y);
+            m_currentMap->addItem(newitem);
+        }
+    }
 }
 
 void Engine::initPlayer()
@@ -105,12 +133,13 @@ void Engine::initPlayer()
 
     m_Player = new Player();
     m_Player->setPosition(5,5);
-    m_Player->setVisRadius(5);
+    m_Player->setVisRadius(12);
 }
 /////////////////////////////////////////////////////////////////////////////
 //
 void Engine::mainLoop()
 {
+
     bool quit = false;
 
     int ch = 0;
@@ -182,6 +211,22 @@ void Engine::mainLoop()
         {
             m_Player->setPosition( moveDirection(m_Player->getPosition(), D_NORTHEAST));
         }
+        else if(ch == 265)
+        {
+            d_showmapitems();
+        }
+        else if(ch == 266)
+        {
+            d_showplayeritems();
+        }
+        else if(ch == 103)
+        {
+            PlayerGetItem();
+        }
+        else if(ch == 100)
+        {
+            PlayerDropItem();
+        }
 
     }
 }
@@ -209,18 +254,34 @@ void Engine::drawMap(vector2i maptopleftpos, recti mapwindow)
             if(i < 0 || n < 0 || i >= mapheight || n >= mapwidth) continue;
 
             //check to see if tile is in visual range
-            this is broken
-            if( getSlantInt(playerx, playery, n, i) > m_Player->getVisRadius()) continue;
+            //this is broken
+            if( std::abs(getDistanceInt(playerx, playery, n, i)) > m_Player->getVisRadius()) continue;
 
             //check if tile is visible to player
             if(!inFov(playerx, playery, n, i) ) continue;
 
-            //set tile color
-            attron(COLOR_PAIR( m_Tiles[m_currentMap->getMapTile(n,i)].m_Color));
-            //draw tile character at position
-            mvaddch(i - maptopleftpos.y, n - maptopleftpos.x , m_Tiles[m_currentMap->getMapTile(n, i)].m_Character);
-            //set tile color back to default color (white)
-            attron(COLOR_PAIR(1));
+            //if there is an item there, draw that instead
+            std::vector<ItemInstance*> founditems = m_currentMap->getItemsAt(n,i);
+            //if items are found at tile, draw last item instead of tile
+            if(!founditems.empty())
+            {
+                //set tile color
+                attron(COLOR_PAIR( founditems.back()->getColor() ) );
+                //draw tile character at position
+                mvaddch(i - maptopleftpos.y, n - maptopleftpos.x , founditems.back()->getCharacter() );
+                //set tile color back to default color (white)
+                attron(COLOR_PAIR(1));
+            }
+            //otherwise draw tile
+            else
+            {
+                //set tile color
+                attron(COLOR_PAIR( m_Tiles[m_currentMap->getMapTile(n,i)].m_Color));
+                //draw tile character at position
+                mvaddch(i - maptopleftpos.y, n - maptopleftpos.x , m_Tiles[m_currentMap->getMapTile(n, i)].m_Character);
+                //set tile color back to default color (white)
+                attron(COLOR_PAIR(1));
+            }
         }
     }
 }
@@ -358,4 +419,84 @@ vector2i Engine::moveDirection(vector2i startpos, int dir)
     if(!m_Tiles[m_currentMap->getMapTile(newpos.x, newpos.y)].m_Walkable) return startpos;
 
     return newpos;
+}
+
+void Engine::PlayerGetItem()
+{
+    vector2i playerpos = m_Player->getPosition();
+
+    //get list of items at players position
+    std::vector<ItemInstance*> itemspresent = m_currentMap->getItemsAt(playerpos.x, playerpos.y);
+
+    if(itemspresent.empty()) return;
+
+    //get last item from items at players current position
+    ItemInstance *titem = itemspresent.back();
+
+    //remove item from map
+    m_currentMap->removeItem(titem);
+    //add item to player
+    m_Player->addItem(titem);
+
+}
+
+void Engine::PlayerDropItem()
+{
+    clear();
+
+    std::vector<ItemInstance*> *playeritems = m_Player->getInventory();
+
+    int ch = 0;
+
+    for(int i = 0; i < int(playeritems->size()); i++)
+    {
+        printw("%d - %s\n", i, (*playeritems)[i]->getName().c_str());
+    }
+
+    ch = getch();
+
+    ch = ch-48;
+
+    //if selection is out of bounds
+    if(ch < 0 || ch >= int(playeritems->size()) ) return;
+    //else drop item
+    else
+    {
+        ItemInstance *titem = (*playeritems)[ch];
+
+        //remove item from player
+        m_Player->removeItem(titem);
+        //add item to map at players position
+        titem->setPosition(m_Player->getPosition());
+        m_currentMap->addItem(titem);
+
+    }
+
+}
+///////////////////////////////////////////////////////////////
+//
+void Engine::d_showmapitems()
+{
+    clear();
+
+    std::vector<ItemInstance*> *mapitems = m_currentMap->d_getmapitems();
+
+    for(int i = 0; i < int(mapitems->size()); i++)
+    {
+        printw("%s\n", (*mapitems)[i]->getName().c_str());
+    }
+    getch();
+}
+
+void Engine::d_showplayeritems()
+{
+    clear();
+
+    std::vector<ItemInstance*> *playeritems = m_Player->getInventory();
+
+    for(int i = 0; i < int(playeritems->size()); i++)
+    {
+        printw("%s\n", (*playeritems)[i]->getName().c_str());
+    }
+    getch();
 }

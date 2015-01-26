@@ -55,4 +55,36 @@ void Map::genDungeon()
             }
         }
     }
+
+}
+
+void Map::addItem(ItemInstance *nitem)
+{
+    m_Items.push_back(nitem);
+}
+
+void Map::removeItem(ItemInstance *ritem)
+{
+    for(int i = int(m_Items.size()-1); i >= 0; i--)
+    {
+        if(ritem == m_Items[i])
+        {
+            m_Items.erase(m_Items.begin() + i);
+            return;
+        }
+    }
+}
+
+std::vector<ItemInstance*> Map::getItemsAt(int x, int y)
+{
+    std::vector<ItemInstance*> founditems;
+
+    for(int i = 0; i < int(m_Items.size()); i++)
+    {
+        vector2i ipos = m_Items[i]->getPosition();
+
+        if(ipos.x == x && ipos.y == y) founditems.push_back(m_Items[i]);
+    }
+
+    return founditems;
 }

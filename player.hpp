@@ -2,6 +2,8 @@
 #define CLASS_PLAYER
 
 #include "common.hpp"
+#include <vector>
+#include "item.hpp"
 
 class Player
 {
@@ -10,6 +12,8 @@ private:
     vector2i m_Pos;
 
     int m_visRadius;
+
+    std::vector<ItemInstance*> m_Inventory;
 
 public:
     Player();
@@ -20,6 +24,11 @@ public:
 
     int getVisRadius() { return m_visRadius;}
     void setVisRadius(int nrad) { m_visRadius = nrad;}
+
+    void addItem(ItemInstance *nitem);
+    void removeItem(ItemInstance *nitem);
+    std::vector<ItemInstance*> *getInventory() { return &m_Inventory;}
+
 
 };
 #endif // CLASS_PLAYER
