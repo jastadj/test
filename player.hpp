@@ -4,19 +4,24 @@
 #include "common.hpp"
 #include <vector>
 #include "item.hpp"
+#include <string>
 
 class Player
 {
 private:
 
-    vector2i m_Pos;
+    std::string m_Name;
 
+    vector2i m_Pos;
     int m_visRadius;
 
     std::vector<ItemInstance*> m_Inventory;
 
 public:
     Player();
+
+    std::string getName() { return m_Name;}
+    void setName(std::string nname) { m_Name = nname;}
 
     vector2i getPosition() { return m_Pos;}
     void setPosition(int x, int y) { m_Pos.x = x; m_Pos.y = y;}

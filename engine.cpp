@@ -4,7 +4,8 @@
 
 Engine::Engine()
 {
-
+    //init pointers
+    m_Player = NULL;
 }
 
 void Engine::start()
@@ -134,6 +135,18 @@ void Engine::initPlayer()
     m_Player = new Player();
     m_Player->setPosition(5,5);
     m_Player->setVisRadius(12);
+
+    clear();
+    echo();
+    char buf[20];
+    mvprintw(12,20,"Enter name:");
+    getstr(buf);
+    noecho();
+
+    m_Player->setName(std::string(buf));
+
+
+
 }
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -163,6 +176,7 @@ void Engine::mainLoop()
         //draw
         drawMap(mapTopLeft, m_MapWindow);
         drawPlayer(m_MapWindow.x + m_MapWindow.width/2, m_MapWindow.y + m_MapWindow.height/2);
+        drawUI(40, 0);
 
         //debug
         mvprintw(24,0,"key:%d", ch);
@@ -284,6 +298,11 @@ void Engine::drawMap(vector2i maptopleftpos, recti mapwindow)
             }
         }
     }
+}
+
+void Engine::drawUI(int x, int y)
+{
+    mvprintw(y+1,x+2, "Name:%s", m_Player->getName().c_str());
 }
 
 bool Engine::inFov(int sx, int sy, int tx, int ty)

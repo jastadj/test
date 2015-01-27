@@ -29,6 +29,7 @@ private:
     //draw
     void drawPlayer(int x, int y);
     void drawMap(vector2i maptopleftpos, recti mapwindow);
+    void drawUI(int x, int y);
     bool inFov(int sx, int sy, int tx, int ty);
     recti m_MapWindow;
 
