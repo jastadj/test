@@ -14,6 +14,16 @@ Map::Map(int width, int height)
 
 }
 
+Map::~Map()
+{
+    for(int i = int(m_Items.size()-1); i >= 0; i--)
+    {
+        delete m_Items[i];
+    }
+
+    m_Items.clear();
+}
+
 void Map::fillMap(int fillTile)
 {
     for(int i = 0; i < m_height; i++)

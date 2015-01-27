@@ -1,8 +1,6 @@
 #include <cstdlib>
-#include <iostream>
-#include <string>
 #include <curses.h>
-#include <time.h>
+
 
 #include "map.hpp"
 #include "player.hpp"
@@ -19,7 +17,7 @@ private:
     void initTiles();
     void initItems();
 
-    void newGame();
+    void newGame(int nseed = -1);
     void initMap();
     void initPlayer();
 
@@ -33,9 +31,10 @@ private:
     recti m_MapWindow;
 
     //objects
+    int m_Seed;
     std::vector<MapTile> m_Tiles;
     std::vector<Item> m_Items;
-    std::vector<Map> m_Maps;
+    std::vector<Map*> m_Maps;
     Map *m_currentMap;
     Player *m_Player;
 
@@ -43,10 +42,12 @@ private:
     vector2i moveDirection(vector2i startpos, int dir);
     void PlayerGetItem();
     void PlayerDropItem();
+    void PlayerInventory();
 
     //debug
+    void d_debugmenu();
+    bool d_light;
     void d_showmapitems();
-    void d_showplayeritems();
 
 public:
     Engine();

@@ -8,6 +8,16 @@ Player::Player()
     m_visRadius = 2;
 }
 
+Player::~Player()
+{
+    for(int i = int(m_Inventory.size()-1); i >= 0; i--)
+    {
+        delete m_Inventory[i];
+    }
+
+    m_Inventory.clear();
+}
+
 void Player::addItem(ItemInstance *nitem)
 {
     m_Inventory.push_back(nitem);

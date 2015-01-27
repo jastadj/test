@@ -22,6 +22,7 @@ private:
 
 public:
     Map(int width, int height);
+    ~Map();
 
     void fillMap(int filltile);
     void genDungeon();

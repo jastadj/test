@@ -1,24 +1,36 @@
 #include "engine.hpp"
 #include "colors.hpp"
 #include <cmath>
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <time.h>
 
 Engine::Engine()
 {
-
+    //initialize pointers
+    m_Player = NULL;
 }
 
 void Engine::start()
 {
     initCurses();
+    std::cout << "init curses\n";
     initColors();
+    std::cout << "init colors\n";
     initTiles();
+    std::cout << "init tiles\n";
     initItems();
+    std::cout << "init items\n";
 
     //set map window dimensions
     m_MapWindow.x = 0;
     m_MapWindow.y = 0;
     m_MapWindow.width = 40;
     m_MapWindow.height = 25;
+
+    //debug
+    d_light = false;
 
     newGame();
 
@@ -84,13 +96,17 @@ void Engine::initItems()
 }
 ////////////////////////////////////////////////////////////////////////////
 //
-void Engine::newGame()
+void Engine::newGame(int nseed)
 {
     //randomize seed
-    srand( time(NULL));
+    if(nseed == -1) m_Seed = int( time(NULL));
+    else m_Seed = nseed;
+    srand(m_Seed);
 
     initMap();
+    std::cout << "init map\n";
     initPlayer();
+    std::cout << "init player \n";
 }
 
 void Engine::initMap()
@@ -99,16 +115,20 @@ void Engine::initMap()
     m_currentMap = NULL;
 
     //clear map list
+    for(int i = int(m_Maps.size()-1); i >= 0; i--)
+    {
+        delete m_Maps[i];
+    }
     m_Maps.clear();
 
     //create first map
-    Map newmap(MAP_WIDTH, MAP_HEIGHT);
-    newmap.fillMap(2);
-    newmap.genDungeon();
+    Map *newmap = new Map(MAP_WIDTH, MAP_HEIGHT);
+    newmap->fillMap(2);
+    newmap->genDungeon();
     m_Maps.push_back(newmap);
 
     //set current map as first map
-    m_currentMap = &m_Maps[0];
+    m_currentMap = m_Maps[0];
 
     //test
     //add some random items to current map
@@ -211,13 +231,9 @@ void Engine::mainLoop()
         {
             m_Player->setPosition( moveDirection(m_Player->getPosition(), D_NORTHEAST));
         }
-        else if(ch == 265)
+        else if(ch == 269)
         {
-            d_showmapitems();
-        }
-        else if(ch == 266)
-        {
-            d_showplayeritems();
+            d_debugmenu();
         }
         else if(ch == 103)
         {
@@ -226,6 +242,10 @@ void Engine::mainLoop()
         else if(ch == 100)
         {
             PlayerDropItem();
+        }
+        else if(ch ==  105)
+        {
+            PlayerInventory();
         }
 
     }
@@ -255,10 +275,10 @@ void Engine::drawMap(vector2i maptopleftpos, recti mapwindow)
 
             //check to see if tile is in visual range
             //this is broken
-            if( std::abs(getDistanceInt(playerx, playery, n, i)) > m_Player->getVisRadius()) continue;
+            if( std::abs(getDistanceInt(playerx, playery, n, i)) > m_Player->getVisRadius() && !d_light) continue;
 
             //check if tile is visible to player
-            if(!inFov(playerx, playery, n, i) ) continue;
+            if(!inFov(playerx, playery, n, i) && !d_light ) continue;
 
             //if there is an item there, draw that instead
             std::vector<ItemInstance*> founditems = m_currentMap->getItemsAt(n,i);
@@ -473,8 +493,86 @@ void Engine::PlayerDropItem()
     }
 
 }
+
+void Engine::PlayerInventory()
+{
+    clear();
+
+    //get players inventory
+    std::vector<ItemInstance*> *playeritems = m_Player->getInventory();
+
+    printw("You are carrying:\n\n");
+
+    ///if player is carrying nothing
+    if(playeritems->empty()) printw("Nothing!\n");
+    //else print inventory
+    else
+    {
+        for(int i = 0; i < int(playeritems->size()); i++)
+        {
+            printw("%s\n", (*playeritems)[i]->getName().c_str());
+        }
+    }
+    getch();
+}
 ///////////////////////////////////////////////////////////////
 //
+void Engine::d_debugmenu()
+{
+
+    bool quit = false;
+
+    int selection = 0;
+
+    while(!quit)
+    {
+        clear();
+
+        int ch = 0;
+
+        std::vector<std::string> menuitem;
+
+        menuitem.push_back("Show Map Items");
+        if(!d_light)menuitem.push_back("FOV Debug = Off");
+        else menuitem.push_back("FOV Debug = On");
+
+        printw("DEBUG\n");
+        printw("-----\n\n");
+
+        mvprintw(0,20,"Player Pos:%d,%d", m_Player->getPosition().x, m_Player->getPosition().y);
+        mvprintw(1,20,"Seed:%d", m_Seed);
+
+        for(int i = 0; i  < int(menuitem.size()); i++)
+        {
+            if(selection == i) attron(A_REVERSE);
+            mvprintw(i+4 + i*2, 4,"%s\n\n", menuitem[i].c_str());
+            attroff(A_REVERSE);
+        }
+
+        ch = getch();
+
+        if(ch == 27) quit = true;
+        //down pressed
+        else if(ch ==  258)
+        {
+            selection++;
+            if(selection >= int(menuitem.size()) ) selection = 0;
+        }
+        //up
+        else if(ch == 259)
+        {
+            selection--;
+            if(selection < 0) selection = int(menuitem.size()-1);
+        }
+        //enter
+        else if(ch == 10)
+        {
+            if(selection == 0) d_showmapitems();
+            else if(selection == 1) d_light = !d_light;
+        }
+    }
+}
+
 void Engine::d_showmapitems()
 {
     clear();
@@ -484,19 +582,6 @@ void Engine::d_showmapitems()
     for(int i = 0; i < int(mapitems->size()); i++)
     {
         printw("%s\n", (*mapitems)[i]->getName().c_str());
-    }
-    getch();
-}
-
-void Engine::d_showplayeritems()
-{
-    clear();
-
-    std::vector<ItemInstance*> *playeritems = m_Player->getInventory();
-
-    for(int i = 0; i < int(playeritems->size()); i++)
-    {
-        printw("%s\n", (*playeritems)[i]->getName().c_str());
     }
     getch();
 }

@@ -17,6 +17,7 @@ private:
 
 public:
     Player();
+    ~Player();
 
     vector2i getPosition() { return m_Pos;}
     void setPosition(int x, int y) { m_Pos.x = x; m_Pos.y = y;}
