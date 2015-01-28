@@ -124,7 +124,6 @@ void Engine::initMap()
     //create first map
     Map *newmap = new Map(MAP_WIDTH, MAP_HEIGHT);
     newmap->fillMap(2);
-    newmap->genDungeon();
     m_Maps.push_back(newmap);
 
     //set current map as first map
@@ -133,7 +132,8 @@ void Engine::initMap()
     //test
     //add some random items to current map
     //add some random items
-    clear();
+    genMap();
+
     for(int i = 0; i < 5; i++)
     {
         int x = rand()%m_currentMap->getWidth();
@@ -151,11 +151,13 @@ void Engine::initPlayer()
 {
     if(m_Player != NULL) delete m_Player;
 
-	
+
     m_Player = new Player();
     m_Player->setPosition(5,5);
     m_Player->setVisRadius(12);
 
+    m_Player->setName("test");
+    /*
     clear();
     echo();
     char buf[20];
@@ -164,10 +166,32 @@ void Engine::initPlayer()
     noecho();
 
     m_Player->setName(std::string(buf));
-
+    */
 
 
 }
+
+/////////////////////////////////////////////////////////////////////////////
+//
+void Engine::genMap()
+{
+    mapDrawBox(m_currentMap, 10,10, 15,15, 1);
+}
+
+void Engine::mapDrawBox(Map *tmap, int x1, int y1, int x2, int y2, int tile)
+{
+
+    for(int i = y1; i >= y2; i++)
+    {
+        for(int n = x1; n >= x2; n++)
+        {
+            not working?
+            if( i < 0 || i >= tmap->getHeight() || n < 0 || n >= tmap->getWidth()) continue;
+            tmap->setMapTile(n,i,tile);
+        }
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 //
 void Engine::mainLoop()
@@ -245,18 +269,22 @@ void Engine::mainLoop()
         {
             m_Player->setPosition( moveDirection(m_Player->getPosition(), D_NORTHEAST));
         }
+        //f5
         else if(ch == 269)
         {
             d_debugmenu();
         }
-        else if(ch == 103)
+        //g or keypad 5
+        else if(ch == 103 || ch == 53)
         {
             PlayerGetItem();
         }
+        //d
         else if(ch == 100)
         {
             PlayerDropItem();
         }
+        //i
         else if(ch ==  105)
         {
             PlayerInventory();
@@ -323,6 +351,7 @@ void Engine::drawMap(vector2i maptopleftpos, recti mapwindow)
 void Engine::drawUI(int x, int y)
 {
     mvprintw(y+1,x+2, "Name:%s", m_Player->getName().c_str());
+    mvprintw(y+2,x+2, "Pos: %d,%d", m_Player->getPosition().x, m_Player->getPosition().y);
 }
 
 bool Engine::inFov(int sx, int sy, int tx, int ty)

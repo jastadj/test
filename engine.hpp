@@ -19,7 +19,11 @@ private:
 
     void newGame(int nseed = -1);
     void initMap();
+    void genMap();
     void initPlayer();
+
+    //map generation
+    void mapDrawBox(Map *tmap, int x1, int y1, int x2, int y2, int tile);
 
     //loops
     void mainLoop();

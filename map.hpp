@@ -25,11 +25,12 @@ public:
     ~Map();
 
     void fillMap(int filltile);
-    void genDungeon();
 
     int getWidth() { return m_width;}
     int getHeight() { return m_height;}
+
     int getMapTile(int x, int y) {return m_mapArray[y][x];}
+    void setMapTile(int x, int y, int tile);
 
     void addItem(ItemInstance *nitem);
     void removeItem(ItemInstance *ritem);

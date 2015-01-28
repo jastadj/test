@@ -35,37 +35,11 @@ void Map::fillMap(int fillTile)
     }
 }
 
-void Map::genDungeon()
+void Map::setMapTile(int x, int y, int tile)
 {
-    int temptile = 1;
+    if(x < 0 || x >= m_width || y < 0 || y >= m_height) return;
 
-    for(int i = 0; i < 20; i++)
-    {
-        int rx = rand()%m_width;
-        int ry = rand()%m_height;
-
-        m_mapArray[ry][rx] = temptile;
-    }
-
-    //set dome markers for debug
-    int debugtile = 1;
-
-    //add border around map
-    for(int i = 0; i < m_height; i++)
-    {
-        for(int n = 0; n < m_width; n++)
-        {
-            if(i == 0 || i == m_height-1)
-            {
-                m_mapArray[i][n] = debugtile;
-            }
-            else if(n == 0 || n == m_width-1)
-            {
-                m_mapArray[i][n] = debugtile;
-            }
-        }
-    }
-
+    m_mapArray[y][x] = tile;
 }
 
 void Map::addItem(ItemInstance *nitem)
