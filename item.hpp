@@ -12,12 +12,19 @@ private:
     chtype m_Character;
     int m_Color;
 
+    bool m_Walkable;
+    bool m_Lightable;
+
 public:
     Item(std::string nname, chtype nchar, int ncolor);
 
     std::string getName() { return m_Name;}
     int getColor() { return m_Color;}
     chtype getCharacter() { return  m_Character;}
+
+    void setWalkable(bool npass) { m_Walkable = npass;}
+    bool isWalkable() { return m_Walkable;}
+    bool isLightable() { return m_Lightable;}
 };
 
 class ItemInstance
@@ -38,7 +45,8 @@ public:
     std::string getName() { return m_ItemRef->getName();}
     int getColor() {return m_ItemRef->getColor();}
     chtype getCharacter() { return m_ItemRef->getCharacter();}
-
+    bool isWalkable() { return m_ItemRef->isWalkable();}
+    bool isLightable() { return m_ItemRef->isLightable();}
 
 
 };

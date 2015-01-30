@@ -14,14 +14,16 @@ Engine::Engine()
 
 void Engine::start()
 {
-    initCurses();
     std::cout << "init curses\n";
-    initColors();
+    initCurses();
     std::cout << "init colors\n";
-    initTiles();
+    initColors();
     std::cout << "init tiles\n";
-    initItems();
+    initTiles();
     std::cout << "init items\n";
+    initItems();
+    std::cout << "init mobs\n";
+    initMobs();
 
     //set map window dimensions
     m_MapWindow.x = 0;
@@ -32,8 +34,9 @@ void Engine::start()
     //debug
     d_light = false;
 
+    std::cout << "start new game\n";
     newGame();
-
+    std::cout << "starting main loop\n";
     mainLoop();
 }
 
@@ -93,6 +96,17 @@ void Engine::initItems()
     newitem = Item("food", '%', YELLOW);
     m_Items.push_back(newitem);
 
+    newitem = Item("door", chtype(219), YELLOW);
+    newitem.setWalkable(false);
+    m_Items.push_back(newitem);
+
+}
+
+void Engine::initMobs()
+{
+    Mob newmob("rat", 'r', 1);
+    m_Mobs.push_back(newmob);
+
 }
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -103,10 +117,11 @@ void Engine::newGame(int nseed)
     else m_Seed = nseed;
     srand(m_Seed);
 
-    initMap();
     std::cout << "init map\n";
-    initPlayer();
+    initMap();
     std::cout << "init player \n";
+    initPlayer();
+
 }
 
 void Engine::initMap()
@@ -133,6 +148,10 @@ void Engine::initMap()
     //add some random items to current map
     //add some random items
     genMap();
+
+    //add test mob
+    MobInstance *newmob = new MobInstance(&m_Mobs[0], 9,9);
+    m_currentMap->addMob(newmob);
 
     for(int i = 0; i < 5; i++)
     {
@@ -176,18 +195,41 @@ void Engine::initPlayer()
 void Engine::genMap()
 {
     mapDrawBox(m_currentMap, 10,10, 15,15, 1);
+    mapDrawBox(m_currentMap, 11, 11, 14, 14, 2);
+    m_currentMap->setMapTile(10, 13, 2);
+    //add door here
+    ItemInstance *newitem = new ItemInstance(&m_Items[2], 10,13);
+    m_currentMap->addItem(newitem);
 }
 
 void Engine::mapDrawBox(Map *tmap, int x1, int y1, int x2, int y2, int tile)
 {
 
-    for(int i = y1; i >= y2; i++)
+    //order coordinates
+    int tx;
+    int ty;
+
+    if(x1 > x2)
     {
-        for(int n = x1; n >= x2; n++)
+        tx = x1;
+        x1 = x2;
+        x2 = tx;
+    }
+
+    if(y1 > y2)
+    {
+        ty = y1;
+        y1 = y2;
+        y2 = ty;
+    }
+
+    for(int i = y1; i <= y2; i++)
+    {
+        for(int n = x1; n <= x2; n++)
         {
-            not working?
             if( i < 0 || i >= tmap->getHeight() || n < 0 || n >= tmap->getWidth()) continue;
             tmap->setMapTile(n,i,tile);
+
         }
     }
 }
@@ -196,7 +238,6 @@ void Engine::mapDrawBox(Map *tmap, int x1, int y1, int x2, int y2, int tile)
 //
 void Engine::mainLoop()
 {
-
     bool quit = false;
 
     int ch = 0;
@@ -322,27 +363,43 @@ void Engine::drawMap(vector2i maptopleftpos, recti mapwindow)
             //check if tile is visible to player
             if(!inFov(playerx, playery, n, i) && !d_light ) continue;
 
-            //if there is an item there, draw that instead
-            std::vector<ItemInstance*> founditems = m_currentMap->getItemsAt(n,i);
-            //if items are found at tile, draw last item instead of tile
-            if(!founditems.empty())
+            //check to see if there is a mob there
+            MobInstance *foundmob = m_currentMap->getMobAt(n,i);
+            if(foundmob != NULL)
             {
+
                 //set tile color
-                attron(COLOR_PAIR( founditems.back()->getColor() ) );
+                attron(COLOR_PAIR( foundmob->getColor() ) );
                 //draw tile character at position
-                mvaddch(i - maptopleftpos.y, n - maptopleftpos.x , founditems.back()->getCharacter() );
+                mvaddch(i - maptopleftpos.y, n - maptopleftpos.x , foundmob->getCharacter() );
                 //set tile color back to default color (white)
                 attron(COLOR_PAIR(1));
+
             }
-            //otherwise draw tile
             else
             {
-                //set tile color
-                attron(COLOR_PAIR( m_Tiles[m_currentMap->getMapTile(n,i)].m_Color));
-                //draw tile character at position
-                mvaddch(i - maptopleftpos.y, n - maptopleftpos.x , m_Tiles[m_currentMap->getMapTile(n, i)].m_Character);
-                //set tile color back to default color (white)
-                attron(COLOR_PAIR(1));
+                //if there is an item there, draw that instead
+                std::vector<ItemInstance*> founditems = m_currentMap->getItemsAt(n,i);
+                //if items are found at tile, draw last item instead of tile
+                if(!founditems.empty())
+                {
+                    //set tile color
+                    attron(COLOR_PAIR( founditems.back()->getColor() ) );
+                    //draw tile character at position
+                    mvaddch(i - maptopleftpos.y, n - maptopleftpos.x , founditems.back()->getCharacter() );
+                    //set tile color back to default color (white)
+                    attron(COLOR_PAIR(1));
+                }
+                //otherwise draw tile
+                else
+                {
+                    //set tile color
+                    attron(COLOR_PAIR( m_Tiles[m_currentMap->getMapTile(n,i)].m_Color));
+                    //draw tile character at position
+                    mvaddch(i - maptopleftpos.y, n - maptopleftpos.x , m_Tiles[m_currentMap->getMapTile(n, i)].m_Character);
+                    //set tile color back to default color (white)
+                    attron(COLOR_PAIR(1));
+                }
             }
         }
     }
@@ -485,6 +542,18 @@ vector2i Engine::moveDirection(vector2i startpos, int dir)
 
     //check tile for walkable
     if(!m_Tiles[m_currentMap->getMapTile(newpos.x, newpos.y)].m_Walkable) return startpos;
+    //check if mob occupies tile
+    else if(m_currentMap->getMobAt(newpos.x, newpos.y) != NULL) return startpos;
+    //check if there is a non-walkable item
+    std::vector<ItemInstance*> titems = m_currentMap->getItemsAt(newpos.x, newpos.y);
+    if(!titems.empty())
+    {
+        //check to see if any items are not walkable
+        for(int i = 0; i < int(titems.size()); i++)
+        {
+            if( !titems[i]->isWalkable() ) return startpos;
+        }
+    }
 
     return newpos;
 }

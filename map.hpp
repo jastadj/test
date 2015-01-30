@@ -10,12 +10,14 @@
 
 #include "maptile.hpp"
 #include "item.hpp"
+#include "mob.hpp"
 
 class Map
 {
 private:
     std::vector< std::vector<int> > m_mapArray;
     std::vector<ItemInstance*> m_Items;
+    std::vector<MobInstance*> m_Mobs;
 
     int m_width;
     int m_height;
@@ -32,9 +34,14 @@ public:
     int getMapTile(int x, int y) {return m_mapArray[y][x];}
     void setMapTile(int x, int y, int tile);
 
+    //items
     void addItem(ItemInstance *nitem);
     void removeItem(ItemInstance *ritem);
     std::vector<ItemInstance*> getItemsAt(int x, int y);
+
+    void addMob(MobInstance *nmob);
+    void removeMob(MobInstance *nmob);
+    MobInstance *getMobAt(int x, int y);
 
 
     std::vector<ItemInstance*> *d_getmapitems() { return &m_Items;}

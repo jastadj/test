@@ -72,3 +72,36 @@ std::vector<ItemInstance*> Map::getItemsAt(int x, int y)
 
     return founditems;
 }
+
+//////////////////////////////////////////////////////////////////////////
+//
+
+void Map::addMob(MobInstance *nmob)
+{
+    m_Mobs.push_back(nmob);
+}
+
+void Map::removeMob(MobInstance *rmob)
+{
+    for(int i = int(m_Mobs.size()-1); i >= 0; i--)
+    {
+        if(rmob == m_Mobs[i])
+        {
+            m_Mobs.erase(m_Mobs.begin() + i);
+            return;
+        }
+    }
+}
+
+MobInstance *Map::getMobAt(int x, int y)
+{
+
+    for(int i = 0; i < int(m_Mobs.size()); i++)
+    {
+        vector2i ipos = m_Mobs[i]->getPosition();
+
+        if(ipos.x == x && ipos.y == y) return m_Mobs[i];
+    }
+
+    return NULL;
+}

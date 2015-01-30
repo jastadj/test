@@ -8,6 +8,10 @@ Item::Item(std::string nname, chtype nchar, int ncolor)
     m_Character = nchar;
     //set color
     m_Color = ncolor;
+
+    //item flags
+    m_Walkable = true;
+    m_Lightable = true;
 }
 
 

@@ -48,6 +48,8 @@
 		<Unit filename="map.hpp" />
 		<Unit filename="maptile.cpp" />
 		<Unit filename="maptile.hpp" />
+		<Unit filename="mob.cpp" />
+		<Unit filename="mob.hpp" />
 		<Unit filename="player.cpp" />
 		<Unit filename="player.hpp" />
 		<Extensions>

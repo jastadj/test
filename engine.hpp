@@ -16,6 +16,7 @@ private:
     void initColors();
     void initTiles();
     void initItems();
+    void initMobs();
 
     void newGame(int nseed = -1);
     void initMap();
@@ -39,6 +40,7 @@ private:
     int m_Seed;
     std::vector<MapTile> m_Tiles;
     std::vector<Item> m_Items;
+    std::vector<Mob> m_Mobs;
     std::vector<Map*> m_Maps;
     Map *m_currentMap;
     Player *m_Player;
