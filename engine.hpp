@@ -34,6 +34,7 @@ private:
     void drawMap(vector2i maptopleftpos, recti mapwindow);
     void drawUI(int x, int y);
     bool inFov(int sx, int sy, int tx, int ty);
+    bool posLightable(int x, int y);
     recti m_MapWindow;
 
     //objects

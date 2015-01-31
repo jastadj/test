@@ -98,6 +98,7 @@ void Engine::initItems()
 
     newitem = Item("door", chtype(219), YELLOW);
     newitem.setWalkable(false);
+    newitem.setLightable(false);
     m_Items.push_back(newitem);
 
 }
@@ -427,7 +428,7 @@ bool Engine::inFov(int sx, int sy, int tx, int ty)
         {
             for(int i = sy-1; i > ty; i--)
             {
-                if( !m_Tiles[m_currentMap->getMapTile(sx, i)].m_Lightable) return false;
+                if( !posLightable(sx, i) ) return false;
             }
             return true;
         }
@@ -435,7 +436,7 @@ bool Engine::inFov(int sx, int sy, int tx, int ty)
         {
             for(int i = sy+1; i < ty; i++)
             {
-                if( !m_Tiles[m_currentMap->getMapTile(sx, i)].m_Lightable) return false;
+                if( !posLightable(sx, i) ) return false;
             }
             return true;
         }
@@ -448,7 +449,7 @@ bool Engine::inFov(int sx, int sy, int tx, int ty)
         {
             for(int i = sx-1; i > tx; i--)
             {
-                if( !m_Tiles[m_currentMap->getMapTile(i, sy)].m_Lightable) return false;
+                if( !posLightable(i, sy) ) return false;
             }
             return true;
         }
@@ -457,7 +458,7 @@ bool Engine::inFov(int sx, int sy, int tx, int ty)
         {
             for(int i = sx+1; i < tx; i++ )
             {
-                if( !m_Tiles[m_currentMap->getMapTile(i, sy)].m_Lightable) return false;
+                if( !posLightable(i, sy) ) return false;
             }
             return true;
         }
@@ -478,7 +479,7 @@ bool Engine::inFov(int sx, int sy, int tx, int ty)
         int tempy = round(m*i+b);
 
         //check to see if target tile is passable
-        if( !m_Tiles[m_currentMap->getMapTile(tempx, tempy)].m_Lightable) return false;
+        if( !posLightable(tempx, tempy) ) return false;
     }
 
     for(int i = ty; i != sy; i+= (sy-ty)/abs(sy-ty))
@@ -490,7 +491,22 @@ bool Engine::inFov(int sx, int sy, int tx, int ty)
         int tempy = i;
 
         //check to see if target tile is passable
-        if( !m_Tiles[m_currentMap->getMapTile(tempx, tempy)].m_Lightable) return false;
+        if( !posLightable(tempx, tempy) ) return false;
+    }
+
+    return true;
+}
+
+bool Engine::posLightable(int x, int y)
+{
+    if( !m_Tiles[m_currentMap->getMapTile(x,y)].m_Lightable) return false;
+
+    //get items at tile and check if they are lightable
+    std::vector<ItemInstance*> titems = m_currentMap->getItemsAt(x, y);
+
+    for(int i = 0; i < int(titems.size()); i++)
+    {
+        if( !titems[i]->isLightable()) return false;
     }
 
     return true;

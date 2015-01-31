@@ -24,6 +24,7 @@ public:
 
     void setWalkable(bool npass) { m_Walkable = npass;}
     bool isWalkable() { return m_Walkable;}
+    void setLightable(bool nlight) { m_Lightable = nlight;}
     bool isLightable() { return m_Lightable;}
 };
 
