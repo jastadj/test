@@ -14,16 +14,13 @@ Item::Item(std::string nname, chtype nchar, int ncolor)
     m_Lightable = true;
 }
 
+ItemDoor::ItemDoor(std::string nname, chtype nchar, int ncolor):Item(nname, nchar, ncolor)
+{
+    m_CharacterDoorOpen = '\\';
+}
 
 ///////////////////////////////////////////////////
 //
-ItemInstance::ItemInstance(Item *iref, vector2i ipos)
-{
-    //link item instance to reference item (master)
-    m_ItemRef = iref;
-    //set item instances position
-    m_Position = ipos;
-}
 
 ItemInstance::ItemInstance(Item *iref, int x, int y)
 {
@@ -32,4 +29,14 @@ ItemInstance::ItemInstance(Item *iref, int x, int y)
     //set item instances position
     m_Position.x = x;
     m_Position.y = y;
+}
+
+chtype ItemInstanceDoor::getCharacter()
+{
+    if(m_DoorOpen)
+    {
+        ItemDoor *doorptr = dynamic_cast<ItemDoor*>(m_ItemRef);
+        return doorptr->getCharacterDoorOpen();
+    }
+    else return m_ItemRef->getCharacter();
 }

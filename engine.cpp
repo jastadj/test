@@ -90,15 +90,15 @@ void Engine::initTiles()
 
 void Engine::initItems()
 {
-    Item newitem("rock", '*', 1);
+    Item *newitem = new ItemGeneric("rock", '*', 1);
     m_Items.push_back(newitem);
 
-    newitem = Item("food", '%', YELLOW);
+    newitem = new ItemGeneric("food", '%', YELLOW);
     m_Items.push_back(newitem);
 
-    newitem = Item("door", chtype(219), YELLOW);
-    newitem.setWalkable(false);
-    newitem.setLightable(false);
+    newitem = new ItemDoor("door", chtype(219), YELLOW);
+    newitem->setWalkable(false);
+    newitem->setLightable(false);
     m_Items.push_back(newitem);
 
 }
@@ -161,7 +161,7 @@ void Engine::initMap()
 
         if( m_Tiles[m_currentMap->getMapTile(x,y)].m_Walkable)
         {
-            ItemInstance *newitem = new ItemInstance(&m_Items[rand()%2], x, y);
+            ItemInstance *newitem = new ItemInstanceGeneric(m_Items[rand()%2], x, y);
             m_currentMap->addItem(newitem);
         }
     }
@@ -199,8 +199,9 @@ void Engine::genMap()
     mapDrawBox(m_currentMap, 11, 11, 14, 14, 2);
     m_currentMap->setMapTile(10, 13, 2);
     //add door here
-    ItemInstance *newitem = new ItemInstance(&m_Items[2], 10,13);
+    ItemInstance *newitem = new ItemInstanceDoor(m_Items[2], 10,13);
     m_currentMap->addItem(newitem);
+
 }
 
 void Engine::mapDrawBox(Map *tmap, int x1, int y1, int x2, int y2, int tile)
