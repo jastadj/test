@@ -35,6 +35,8 @@ public:
     void removeItem(ItemInstance *nitem);
     std::vector<ItemInstance*> *getInventory() { return &m_Inventory;}
 
+    int getAttackDamage() { return 1;}
+
 
 };
 #endif // CLASS_PLAYER

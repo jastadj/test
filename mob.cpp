@@ -9,6 +9,9 @@ Mob::Mob(std::string nname, chtype nchar, int ncolor)
     //set icon color
     m_Color = ncolor;
 
+    //set minimum max hp
+    m_MaxHP = 1;
+
 }
 
 Mob::~Mob()
@@ -18,13 +21,6 @@ Mob::~Mob()
 
 ////////////////////////////////////////////////////////////////////
 //
-MobInstance::MobInstance(Mob *mref, vector2i ipos)
-{
-    //link item instance to reference item (master)
-    m_MobRef = mref;
-    //set item instances position
-    m_Position = ipos;
-}
 
 MobInstance::MobInstance(Mob *mref, int x, int y)
 {
@@ -33,4 +29,16 @@ MobInstance::MobInstance(Mob *mref, int x, int y)
     //set item instances position
     m_Position.x = x;
     m_Position.y = y;
+
+    //fill up current hp to max on creation
+    m_CurrentHP = getMaxHP();
+
+}
+
+void MobInstance::addHP(int val)
+{
+    m_CurrentHP += val;
+
+    if(m_CurrentHP > getMaxHP()) m_CurrentHP = getMaxHP();
+
 }

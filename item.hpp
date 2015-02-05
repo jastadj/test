@@ -96,8 +96,8 @@ public:
     int getType() { return m_ItemRef->getType();}
 
     chtype getCharacter();
-    bool isWalkable() { if(m_DoorOpen) return true; else return m_ItemRef->isWalkable();}
-    bool isLightable() { if(m_DoorOpen) return true; else return m_ItemRef->isLightable();}
+    bool isWalkable();
+    bool isLightable();
 
     bool isDoorOpen() { return m_DoorOpen;}
     void toggleDoor() { m_DoorOpen = !m_DoorOpen;}

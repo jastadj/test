@@ -7,6 +7,12 @@
 
 enum {D_NA, D_SOUTHWEST, D_SOUTH, D_SOUTHEAST, D_WEST, D_NODIR, D_EAST, D_NORTHWEST, D_NORTH, D_NORTHEAST, D_TOTAL};
 
+struct Message
+{
+    std::string msg;
+    int life;
+};
+
 class Engine
 {
 private:
@@ -51,6 +57,12 @@ private:
     void PlayerGetItem();
     void PlayerDropItem();
     void PlayerInventory();
+    void doMobTurn();
+
+    //messaging
+    std::vector<Message> m_MessageQue;
+    void addMessage(std::string amsg);
+    void drawMessages();
 
     //debug
     void d_debugmenu();

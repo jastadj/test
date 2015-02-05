@@ -42,6 +42,7 @@ public:
     void addMob(MobInstance *nmob);
     void removeMob(MobInstance *nmob);
     MobInstance *getMobAt(int x, int y);
+    std::vector<MobInstance*> *getMobs() { return &m_Mobs;}
 
 
     std::vector<ItemInstance*> *d_getmapitems() { return &m_Items;}

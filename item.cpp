@@ -33,10 +33,25 @@ ItemInstance::ItemInstance(Item *iref, int x, int y)
 
 chtype ItemInstanceDoor::getCharacter()
 {
+
     if(m_DoorOpen)
     {
         ItemDoor *doorptr = dynamic_cast<ItemDoor*>(m_ItemRef);
         return doorptr->getCharacterDoorOpen();
     }
     else return m_ItemRef->getCharacter();
+}
+
+bool ItemInstanceDoor::isWalkable()
+{
+    if(m_DoorOpen) return true;
+
+    else return m_ItemRef->isWalkable();
+}
+
+bool ItemInstanceDoor::isLightable()
+{
+    if(m_DoorOpen) return true;
+
+    else return m_ItemRef->isLightable();
 }

@@ -13,6 +13,9 @@ private:
     chtype m_Character;
     int m_Color;
 
+    //stats
+    int m_MaxHP;
+
 public:
     Mob(std::string nname, chtype nchar, int ncolor);
     ~Mob();
@@ -20,6 +23,9 @@ public:
     std::string getName() { return m_Name;}
     chtype getCharacter() { return m_Character;}
     int getColor() { return m_Color;}
+
+    int getMaxHP() { return m_MaxHP;}
+    void setMaxHP(int nmaxhp) { m_MaxHP = nmaxhp;}
 };
 
 class MobInstance
@@ -29,8 +35,10 @@ private:
 
     vector2i m_Position;
 
+    //stats
+    int m_CurrentHP;
+
 public:
-    MobInstance(Mob *mref, vector2i ipos);
     MobInstance(Mob *mref, int x, int y);
 
     vector2i getPosition() { return m_Position;}
@@ -40,6 +48,11 @@ public:
     std::string getName() { return m_MobRef->getName();}
     chtype getCharacter() { return m_MobRef->getCharacter();}
     int getColor() { return m_MobRef->getColor();}
+
+    int getMaxHP() { return m_MobRef->getMaxHP();}
+    int getCurrentHP() { return m_CurrentHP;}
+    void addHP(int val);
+    bool isDead() { if(m_CurrentHP <= 0) return true; else return false;}
 
 };
 #endif // CLASS_MOB

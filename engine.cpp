@@ -106,6 +106,7 @@ void Engine::initItems()
 void Engine::initMobs()
 {
     Mob newmob("rat", 'r', 1);
+    newmob.setMaxHP(3);
     m_Mobs.push_back(newmob);
 
 }
@@ -201,6 +202,8 @@ void Engine::genMap()
     //add door here
     ItemInstance *newitem = new ItemInstanceDoor(m_Items[2], 10,13);
     m_currentMap->addItem(newitem);
+    newitem = new ItemInstanceDoor(m_Items[2],3,3);
+    m_currentMap->addItem(newitem);
 
 }
 
@@ -253,17 +256,19 @@ void Engine::mainLoop()
         //clear screen
         clear();
 
+        //mobs turn
+        doMobTurn();
+
         //calc each frame
         vector2i mapTopLeft = m_Player->getPosition();
         mapTopLeft.x -= m_MapWindow.width/2;
         mapTopLeft.y -= m_MapWindow.height/2;
 
-
-
         //draw
         drawMap(mapTopLeft, m_MapWindow);
         drawPlayer(m_MapWindow.x + m_MapWindow.width/2, m_MapWindow.y + m_MapWindow.height/2);
         drawUI(40, 0);
+        drawMessages();
 
         //debug
         mvprintw(24,0,"key:%d", ch);
@@ -334,6 +339,15 @@ void Engine::mainLoop()
         }
 
     }
+}
+
+void Engine::addMessage(std::string amsg)
+{
+    Message newmsg;
+    newmsg.msg = amsg;
+    newmsg.life = 4;
+
+    m_MessageQue.push_back(newmsg);
 }
 
 /////////////////////////////////////////////////////////
@@ -411,6 +425,23 @@ void Engine::drawUI(int x, int y)
 {
     mvprintw(y+1,x+2, "Name:%s", m_Player->getName().c_str());
     mvprintw(y+2,x+2, "Pos: %d,%d", m_Player->getPosition().x, m_Player->getPosition().y);
+}
+
+void Engine::drawMessages()
+{
+    int msgcount = int(m_MessageQue.size());
+
+    mvprintw(0,0, "msg count:%d", msgcount);
+
+    for(int i = msgcount-1; i >= 0; i--)
+    {
+        m_MessageQue[i].life--;
+
+        if(m_MessageQue[i].life < 0) m_MessageQue.erase(m_MessageQue.begin()+i);
+        else mvprintw(24 - msgcount + i,2, "%s", m_MessageQue[i].msg.c_str());
+
+    }
+
 }
 
 bool Engine::inFov(int sx, int sy, int tx, int ty)
@@ -560,7 +591,19 @@ vector2i Engine::moveDirection(vector2i startpos, int dir)
     //check tile for walkable
     if(!m_Tiles[m_currentMap->getMapTile(newpos.x, newpos.y)].m_Walkable) return startpos;
     //check if mob occupies tile
-    else if(m_currentMap->getMobAt(newpos.x, newpos.y) != NULL) return startpos;
+    MobInstance *tmob = m_currentMap->getMobAt(newpos.x, newpos.y);
+    if( tmob != NULL)
+    {
+        //attack mob
+        tmob->addHP( -m_Player->getAttackDamage());
+        //add message
+        std::stringstream smsg;
+        smsg << "You hit " << tmob->getName() << " for " << m_Player->getAttackDamage() << " dmg";
+        addMessage(smsg.str());
+
+        //dont move
+        return startpos;
+    }
     //check if there is a non-walkable item
     std::vector<ItemInstance*> titems = m_currentMap->getItemsAt(newpos.x, newpos.y);
     if(!titems.empty())
@@ -568,7 +611,24 @@ vector2i Engine::moveDirection(vector2i startpos, int dir)
         //check to see if any items are not walkable
         for(int i = 0; i < int(titems.size()); i++)
         {
-            if( !titems[i]->isWalkable() ) return startpos;
+            if( !titems[i]->isWalkable() )
+            {
+                //check to see if item is a door?
+                if(titems[i]->getType() == I_DOOR)
+                {
+                    ItemInstanceDoor *dptr = dynamic_cast<ItemInstanceDoor*>(titems[i]);
+
+                    //if door is not open
+                    if(!dptr->isDoorOpen())
+                    {
+                        //open door
+                        dptr->setDoorOpen(true);
+                        addMessage("You open the door.");
+                    }
+                }
+
+                return startpos;
+            }
         }
     }
 
@@ -591,6 +651,9 @@ void Engine::PlayerGetItem()
     m_currentMap->removeItem(titem);
     //add item to player
     m_Player->addItem(titem);
+
+    //add message
+    addMessage(std::string("You pick up " + titem->getName()));
 
 }
 
@@ -624,6 +687,9 @@ void Engine::PlayerDropItem()
         titem->setPosition(m_Player->getPosition());
         m_currentMap->addItem(titem);
 
+        //add message
+        addMessage(std::string("You drop " + titem->getName()));
+
     }
 
 }
@@ -648,6 +714,22 @@ void Engine::PlayerInventory()
         }
     }
     getch();
+}
+
+void Engine::doMobTurn()
+{
+    std::vector<MobInstance*> *mobs = m_currentMap->getMobs();
+
+    for(int i = int(mobs->size()-1); i >= 0; i--)
+    {
+        //if mob is dead
+        if( (*mobs)[i]->isDead())
+        {
+            addMessage(std::string( (*mobs)[i]->getName() + " dies"));
+            m_currentMap->removeMob( (*mobs)[i]);
+
+        }
+    }
 }
 ///////////////////////////////////////////////////////////////
 //
@@ -715,7 +797,9 @@ void Engine::d_showmapitems()
 
     for(int i = 0; i < int(mapitems->size()); i++)
     {
-        printw("%s\n", (*mapitems)[i]->getName().c_str());
+        printw("%s", (*mapitems)[i]->getName().c_str());
+        if( (*mapitems)[i]->isWalkable()) printw(" - walkable");
+        printw("\n");
     }
     getch();
 }
