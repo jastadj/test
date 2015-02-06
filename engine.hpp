@@ -59,6 +59,9 @@ private:
     void PlayerDropItem();
     void PlayerInventory();
     void doMobTurn();
+    //this returns a chunk of the map to pass to astar for pathfinding
+    //give it a map, a radius to copy, starting position , and target position
+    std::vector<std::vector<int> > getAStarMapChunk(Map *tmap, int radius, int sx, int sy, int tx, int ty);
 
     //messaging
     std::vector<Message> m_MessageQue;

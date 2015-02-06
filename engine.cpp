@@ -728,9 +728,94 @@ void Engine::doMobTurn()
         {
             addMessage(std::string( (*mobs)[i]->getName() + " dies"));
             m_currentMap->removeMob( (*mobs)[i]);
+        }
 
+        vector2i mobpos = (*mobs)[i]->getPosition();
+        vector2i plypos = m_Player->getPosition();
+        getAStarMapChunk(m_currentMap, 30, mobpos.x, mobpos.y, plypos.x, plypos.y);
+    }
+}
+
+std::vector<std::vector<int> > Engine::getAStarMapChunk(Map *tmap, int radius, int sx, int sy, int tx, int ty)
+{
+    std::vector< std::vector<int> > pmap;
+
+    //get valid dimensions to clip from map
+    recti clip;
+    clip.x = sx - radius;
+    clip.y = sy - radius;
+    clip.width = radius*2;
+    clip.height = radius*2;
+
+    //trim rect to fit within map
+    //check top
+    if(clip.y < 0)
+    {
+        clip.height += clip.y;
+        clip.y = 0;
+    }
+    //check bottom
+    if( (clip.y + clip.height) >= tmap->getHeight())
+    {
+        int dif = clip.y + clip.height - tmap->getHeight()+1;
+        clip.height -= dif;
+    }
+    //check left
+    if(clip.x < 0)
+    {
+        clip.width += clip.x;
+        clip.x = 0;
+    }
+    //check right
+    if( (clip.x + clip.width) >= tmap->getWidth())
+    {
+        int dif = clip.x + clip.width - tmap->getWidth()+1;
+        clip.width -= dif;
+    }
+
+    //init vector
+    pmap.resize( clip.height);
+    for(int i = 0; i < clip.height; i++)
+        for(int n = 0; n < clip.width; n++) pmap[i].push_back(0);
+
+    //calculate coordinate offests
+    int offset_x = clip.x;
+    int offset_y = clip.y;
+
+    //create mask of walkable positions
+    //check walkable tiles
+    for(int i = clip.y; i < clip.height; i++)
+    {
+        for(int n = clip.x; n < clip.width; n++)
+        {
+            if( !m_Tiles[tmap->getMapTile(n,i)].m_Walkable ) pmap[i-offset_y][n-offset_x] = 1;
         }
     }
+
+    //check items
+    std::vector<ItemInstance*> *titems = tmap->getItems();
+    for(int i = 0; i < int( titems->size()); i++)
+    {
+        vector2i ipos = (*titems)[i]->getPosition();
+        test
+    }
+
+    //
+    //debug
+    /*
+    clear();
+    printw("map dim: [0-%d], [0-%d]\n", tmap->getWidth()-1, tmap->getHeight()-1);
+    printw("source : %d, %d\n", sx, sy);
+    printw("target : %d, %d\n\n", tx, ty);
+    printw("radius : %d\n", radius);
+    printw("clip   : top:%d  bottom:%d    left:%d  right:%d]\n", clip.y, clip.y+clip.height, clip.x, clip.x+clip.width);
+
+    getch();
+    */
+
+    return pmap;
+
+
 }
 ///////////////////////////////////////////////////////////////
 //

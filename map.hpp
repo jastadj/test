@@ -38,6 +38,7 @@ public:
     void addItem(ItemInstance *nitem);
     void removeItem(ItemInstance *ritem);
     std::vector<ItemInstance*> getItemsAt(int x, int y);
+    std::vector<ItemInstance*> *getItems() { return &m_Items;}
 
     void addMob(MobInstance *nmob);
     void removeMob(MobInstance *nmob);
