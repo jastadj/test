@@ -4,6 +4,7 @@
 
 #include "map.hpp"
 #include "player.hpp"
+#include "astar.hpp"
 
 enum {D_NA, D_SOUTHWEST, D_SOUTH, D_SOUTHEAST, D_WEST, D_NODIR, D_EAST, D_NORTHWEST, D_NORTH, D_NORTHEAST, D_TOTAL};
 

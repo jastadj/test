@@ -36,6 +36,8 @@
 			<Add library="..\..\Curses_S\lib\pdcurses.a" />
 			<Add directory="../../Curses_S/lib" />
 		</Linker>
+		<Unit filename="astar.cpp" />
+		<Unit filename="astar.hpp" />
 		<Unit filename="colors.hpp" />
 		<Unit filename="common.cpp" />
 		<Unit filename="common.hpp" />

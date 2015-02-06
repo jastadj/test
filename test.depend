@@ -81,11 +81,12 @@
 	<sstream>
 	<time.h>
 
-1423194159 c:\codeblocks\projects\test\engine.hpp
+1423195049 c:\codeblocks\projects\test\engine.hpp
 	<cstdlib>
 	<curses.h>
 	"map.hpp"
 	"player.hpp"
+	"astar.hpp"
 
 1216149206 c:\codeblocks\curses_s\include\curses.h
 	<stdarg.h>
@@ -130,7 +131,7 @@
 1422230081 source:c:\codeblocks\projects\test\maptile.cpp
 	"maptile.hpp"
 
-1423194464 source:c:\codeblocks\projects\test\player.cpp
+1423194558 source:c:\codeblocks\projects\test\player.cpp
 	"player.hpp"
 
 1423157620 c:\documents and settings\jjastad\my documents\codeblocks\projects\test\mob.hpp
@@ -148,4 +149,10 @@
 
 1423194159 source:c:\codeblocks\projects\test\mob.cpp
 	"mob.hpp"
+
+1423195084 c:\codeblocks\projects\test\astar.hpp
+	<cstdlib>
+	<vector>
+	<cmath>
+	"common.hpp"
 
