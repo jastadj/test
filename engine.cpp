@@ -425,6 +425,7 @@ void Engine::drawUI(int x, int y)
 {
     mvprintw(y+1,x+2, "Name:%s", m_Player->getName().c_str());
     mvprintw(y+2,x+2, "Pos: %d,%d", m_Player->getPosition().x, m_Player->getPosition().y);
+    mvprintw(y+3, x+2, "HP: %d/%d", m_Player->getCurrentHP(), m_Player->getMaxHP());
 }
 
 void Engine::drawMessages()

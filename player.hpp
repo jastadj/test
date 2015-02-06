@@ -17,6 +17,9 @@ private:
 
     std::vector<ItemInstance*> m_Inventory;
 
+    int m_MaxHP;
+    int m_CurrentHP;
+
 public:
     Player();
     ~Player();
@@ -36,6 +39,9 @@ public:
     std::vector<ItemInstance*> *getInventory() { return &m_Inventory;}
 
     int getAttackDamage() { return 1;}
+    int getMaxHP() { return m_MaxHP;}
+    int getCurrentHP() { return m_CurrentHP;}
+    void addHP(int val);
 
 
 };

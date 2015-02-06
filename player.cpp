@@ -6,6 +6,10 @@ Player::Player()
     m_Pos.y = 0;
 
     m_visRadius = 2;
+
+    //init bare minimum hp
+    m_MaxHP = 1;
+    m_CurrentHP = m_MaxHP;
 }
 
 Player::~Player()
@@ -16,6 +20,14 @@ Player::~Player()
     }
 
     m_Inventory.clear();
+}
+
+void Player::addHP(int val)
+{
+    m_CurrentHP += val;
+
+    if(m_CurrentHP > m_MaxHP) m_CurrentHP = m_MaxHP;
+
 }
 
 void Player::addItem(ItemInstance *nitem)
