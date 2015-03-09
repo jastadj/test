@@ -64,6 +64,8 @@ void Engine::initColors()
     init_pair(GREEN, COLOR_GREEN, COLOR_BLACK);
     init_pair(BLUE, COLOR_BLUE, COLOR_BLACK);
     init_pair(YELLOW, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(CYAN, COLOR_CYAN, COLOR_BLACK);
+    init_pair(MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
 }
 
 void Engine::initTiles()
@@ -85,6 +87,76 @@ void Engine::initTiles()
     newtile.m_Character = '.';
     m_Tiles.push_back(newtile);
 
+    //tile 3 : grass
+    newtile = MapTile();
+    newtile.m_Character = '.';
+    newtile.m_Color = GREEN;
+    m_Tiles.push_back(newtile);
+
+    //tile 4 : grass
+    newtile = MapTile();
+    newtile.m_Character = ',';
+    newtile.m_Color = GREEN;
+    m_Tiles.push_back(newtile);
+
+    //tile 5 : grass
+    newtile = MapTile();
+    newtile.m_Character = '\'';
+    newtile.m_Color = GREEN;
+    m_Tiles.push_back(newtile);
+
+    //tile 6 : grass
+    newtile = MapTile();
+    newtile.m_Character = '`';
+    newtile.m_Color = GREEN;
+    m_Tiles.push_back(newtile);
+
+    //tile 7 : grass
+    newtile = MapTile();
+    newtile.m_Character = '"';
+    newtile.m_Color = GREEN;
+    m_Tiles.push_back(newtile);
+
+    //tile 8 : grass
+    newtile = MapTile();
+    newtile.m_Character = '.';
+    newtile.m_Color = GREEN;
+    newtile.m_ColorBright = true;
+    m_Tiles.push_back(newtile);
+
+    //tile 9 : grass
+    newtile = MapTile();
+    newtile.m_Character = ',';
+    newtile.m_Color = GREEN;
+    newtile.m_ColorBright = true;
+    m_Tiles.push_back(newtile);
+
+    //tile 10 : grass
+    newtile = MapTile();
+    newtile.m_Character = '\'';
+    newtile.m_Color = GREEN;
+    newtile.m_ColorBright = true;
+    m_Tiles.push_back(newtile);
+
+    //tile 11 : grass
+    newtile = MapTile();
+    newtile.m_Character = '`';
+    newtile.m_Color = GREEN;
+    newtile.m_ColorBright = true;
+    m_Tiles.push_back(newtile);
+
+    //tile 12 : grass
+    newtile = MapTile();
+    newtile.m_Character = '"';
+    newtile.m_Color = GREEN;
+    newtile.m_ColorBright = true;
+    m_Tiles.push_back(newtile);
+
+    //tile 13 : random grass (used to identify random grass tile for gen)
+    newtile = MapTile();
+    newtile.m_Character = '?';
+    newtile.m_Color = GREEN;
+    m_Tiles.push_back(newtile);
 
 }
 
@@ -107,6 +179,7 @@ void Engine::initMobs()
 {
     Mob newmob("rat", 'r', 1);
     newmob.setMaxHP(3);
+    newmob.setDefaultAIBehavior(AI_WANDER);
     m_Mobs.push_back(newmob);
 
 }
@@ -196,6 +269,12 @@ void Engine::initPlayer()
 //
 void Engine::genMap()
 {
+    //reset seed
+    srand(m_Seed);
+
+    //fill map with grass
+    mapDrawBox(m_currentMap,0,0, m_currentMap->getWidth(), m_currentMap->getHeight(), 13); // random grass
+
     mapDrawBox(m_currentMap, 10,10, 15,15, 1);
     mapDrawBox(m_currentMap, 11, 11, 14, 14, 2);
     m_currentMap->setMapTile(10, 13, 2);
@@ -205,6 +284,14 @@ void Engine::genMap()
     newitem = new ItemInstanceDoor(m_Items[2],3,3);
     m_currentMap->addItem(newitem);
 
+    //test
+    m_currentMap->setMapTile(0,0,12);
+}
+
+int Engine::genGrass()
+{
+    //draw random grass tile (3-12)
+    return rand()%9+3;
 }
 
 void Engine::mapDrawBox(Map *tmap, int x1, int y1, int x2, int y2, int tile)
@@ -233,7 +320,12 @@ void Engine::mapDrawBox(Map *tmap, int x1, int y1, int x2, int y2, int tile)
         for(int n = x1; n <= x2; n++)
         {
             if( i < 0 || i >= tmap->getHeight() || n < 0 || n >= tmap->getWidth()) continue;
-            tmap->setMapTile(n,i,tile);
+
+            if(tile == 13) // if tile is random grass
+            {
+                tmap->setMapTile(n,i,genGrass());
+            }
+            else tmap->setMapTile(n,i,tile);
 
         }
     }
@@ -411,8 +503,11 @@ void Engine::drawMap(vector2i maptopleftpos, recti mapwindow)
                 {
                     //set tile color
                     attron(COLOR_PAIR( m_Tiles[m_currentMap->getMapTile(n,i)].m_Color));
+                    //is tile bright?
+                    if(m_Tiles[m_currentMap->getMapTile(n,i)].m_ColorBright) attron(A_BOLD);
                     //draw tile character at position
                     mvaddch(i - maptopleftpos.y, n - maptopleftpos.x , m_Tiles[m_currentMap->getMapTile(n, i)].m_Character);
+                    attroff(A_BOLD);
                     //set tile color back to default color (white)
                     attron(COLOR_PAIR(1));
                 }

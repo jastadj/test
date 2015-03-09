@@ -10,6 +10,7 @@ public:
 
     chtype m_Character;
     int m_Color;
+    bool m_ColorBright;
 
     //flags
     bool m_Walkable;

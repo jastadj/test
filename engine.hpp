@@ -32,6 +32,8 @@ private:
 
     //map generation
     void mapDrawBox(Map *tmap, int x1, int y1, int x2, int y2, int tile);
+    int genGrass();
+
 
     //loops
     void mainLoop();
