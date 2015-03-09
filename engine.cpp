@@ -797,7 +797,7 @@ std::vector<std::vector<int> > Engine::getAStarMapChunk(Map *tmap, int radius, i
     for(int i = 0; i < int( titems->size()); i++)
     {
         vector2i ipos = (*titems)[i]->getPosition();
-        test
+        if(!(*titems)[i]->isWalkable()) pmap[ipos.y-offset_y][ipos.x-offset_x] = 1;
     }
 
     //
