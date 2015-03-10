@@ -170,6 +170,7 @@ void Engine::initItems()
 
     newitem = new ItemDoor("door", chtype(219), YELLOW);
     newitem->setWalkable(false);
+    newitem->setMovable(false);
     newitem->setLightable(false);
     m_Items.push_back(newitem);
 
@@ -742,6 +743,12 @@ void Engine::PlayerGetItem()
 
     //get last item from items at players current position
     ItemInstance *titem = itemspresent.back();
+
+    if(!titem->isMovable())
+    {
+        addMessage(std::string("Unable to pickup " + titem->getName()));
+        return;
+    }
 
     //remove item from map
     m_currentMap->removeItem(titem);
