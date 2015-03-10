@@ -12,6 +12,7 @@ Item::Item(std::string nname, chtype nchar, int ncolor)
     //item flags
     m_Walkable = true;
     m_Lightable = true;
+    m_Movable = true;
 }
 
 ItemDoor::ItemDoor(std::string nname, chtype nchar, int ncolor):Item(nname, nchar, ncolor)
