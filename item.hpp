@@ -16,6 +16,7 @@ protected:
 
     bool m_Walkable;
     bool m_Lightable;
+    bool m_Movable;
 
 public:
     Item(std::string nname, chtype nchar, int ncolor);
@@ -28,7 +29,9 @@ public:
     void setWalkable(bool npass) { m_Walkable = npass;}
     bool isWalkable() { return m_Walkable;}
     void setLightable(bool nlight) { m_Lightable = nlight;}
+    void setMovable( bool nmove) { m_Movable = nmove;}
     bool isLightable() { return m_Lightable;}
+    bool isMovable() { return m_Movable;}
 };
 
 class ItemGeneric: public Item
@@ -76,6 +79,7 @@ public:
     virtual chtype getCharacter() { return m_ItemRef->getCharacter();}
     virtual bool isWalkable() { return m_ItemRef->isWalkable();}
     virtual bool isLightable() { return m_ItemRef->isLightable();}
+    virtual bool isMovable() { return m_ItemRef->isMovable();}
 };
 
 class ItemInstanceGeneric: public ItemInstance
