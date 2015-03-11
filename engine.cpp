@@ -344,10 +344,20 @@ void Engine::mainLoop()
     noecho();
     curs_set(0);
 
+
+    WINDOW *mywin = new WINDOW;
+    mywin = newwin(5,8,10,10);
+
+
+
     while(!quit)
     {
+
+
+
         //clear screen
         clear();
+        wclear(mywin);
 
         //mobs turn
         doMobTurn();
@@ -366,7 +376,15 @@ void Engine::mainLoop()
         //debug
         mvprintw(24,0,"key:%d", ch);
 
+        refresh();
+
+        //window
+        box(mywin, 0, 0);
+        mvwprintw(mywin,0,1,"TEST");
+        wrefresh(mywin);
+
         ch = getch();
+
 
         //handle keyboard input
         if(ch == 27) quit = true;
