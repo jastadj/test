@@ -344,10 +344,10 @@ void Engine::mainLoop()
     noecho();
     curs_set(0);
 
-
+/*
     WINDOW *mywin = new WINDOW;
     mywin = newwin(5,8,10,10);
-
+*/
 
 
     while(!quit)
@@ -357,7 +357,7 @@ void Engine::mainLoop()
 
         //clear screen
         clear();
-        wclear(mywin);
+        //wclear(mywin);
 
         //mobs turn
         doMobTurn();
@@ -379,9 +379,9 @@ void Engine::mainLoop()
         refresh();
 
         //window
-        box(mywin, 0, 0);
-        mvwprintw(mywin,0,1,"TEST");
-        wrefresh(mywin);
+        //box(mywin, 0, 0);
+        //mvwprintw(mywin,0,1,"TEST");
+        //wrefresh(mywin);
 
         ch = getch();
 
@@ -414,7 +414,7 @@ void Engine::mainLoop()
             m_Player->setPosition( moveDirection(m_Player->getPosition(), D_EAST));
         }
         //move player NW
-        else if(ch == 261 || ch == 55)
+        else if(ch == 55)
         {
             m_Player->setPosition( moveDirection(m_Player->getPosition(), D_NORTHWEST));
         }
@@ -424,7 +424,7 @@ void Engine::mainLoop()
             m_Player->setPosition( moveDirection(m_Player->getPosition(), D_NORTH));
         }
         //move player NE
-        else if(ch == 261 || ch == 57)
+        else if(ch == 57)
         {
             m_Player->setPosition( moveDirection(m_Player->getPosition(), D_NORTHEAST));
         }
@@ -447,6 +447,11 @@ void Engine::mainLoop()
         else if(ch ==  105)
         {
             PlayerInventory();
+        }
+        //c
+        else if(ch == 99)
+        {
+            actionClose();
         }
 
     }
@@ -835,6 +840,49 @@ void Engine::PlayerInventory()
         }
     }
     getch();
+}
+
+void Engine::actionClose()
+{
+    //get input from user for direction of where to close
+    int closedir = 0;
+
+    closedir = getch();
+
+    switch(closedir)
+    {
+       //close SW
+        case 49:
+            break;
+        //close SOUTH
+        case 258:
+        case 50:
+            break;
+        //close SE
+        case 51:
+            break;
+        //close WEST
+        case 260:
+        case 52:
+            break;
+        //close EAST
+        case 261:
+        case 54:
+            break;
+        //close NW
+        case 55:
+            break;
+        //close NORTH
+        case 259:
+        case 56:
+            break;
+        //close NE
+        case 57:
+            break;
+        default:
+            break;
+    }
+
 }
 
 void Engine::doMobTurn()
