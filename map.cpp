@@ -105,3 +105,25 @@ MobInstance *Map::getMobAt(int x, int y)
 
     return NULL;
 }
+
+///////////////////////////////////////////////////////////////////////
+//
+void Map::closeDoor(ItemInstanceDoor *tdoor)
+{
+
+}
+
+void Map::closeDoor(int x, int y)
+{
+    std::vector<ItemInstance*> itemsat = getItemsAt(x,y);
+
+    //search for door type
+    for(int i = 0; i < int(itemsat.size()); i++)
+    {
+        if(itemsat[i]->getType() == I_DOOR)
+        {
+            ItemInstanceDoor *tdoor = dynamic_cast<ItemInstanceDoor*>(itemsat[i]);
+            tdoor->setDoorOpen(false);
+        }
+    }
+}

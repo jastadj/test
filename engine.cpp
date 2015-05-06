@@ -847,6 +847,9 @@ void Engine::actionClose()
     //get input from user for direction of where to close
     int closedir = 0;
 
+    //query user
+    mvprintw(19,5, "Close in which direction?");
+
     closedir = getch();
 
     switch(closedir)
@@ -985,6 +988,7 @@ std::vector<std::vector<int> > Engine::getAStarMapChunk(Map *tmap, int radius, i
 
 
 }
+
 ///////////////////////////////////////////////////////////////
 //
 void Engine::d_debugmenu()

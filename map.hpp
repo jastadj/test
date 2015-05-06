@@ -40,6 +40,9 @@ public:
     std::vector<ItemInstance*> getItemsAt(int x, int y);
     std::vector<ItemInstance*> *getItems() { return &m_Items;}
 
+    void closeDoor(ItemInstanceDoor *tdoor);
+    void closeDoor(int x, int y);
+
     void addMob(MobInstance *nmob);
     void removeMob(MobInstance *nmob);
     MobInstance *getMobAt(int x, int y);

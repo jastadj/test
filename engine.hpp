@@ -55,6 +55,7 @@ private:
     Map *m_currentMap;
     Player *m_Player;
 
+
     //mob/player actions
     vector2i moveDirection(vector2i startpos, int dir);
     void PlayerGetItem();
