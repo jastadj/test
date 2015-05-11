@@ -852,35 +852,45 @@ void Engine::actionClose()
 
     closedir = getch();
 
+    vector2i dpos = m_Player->getPosition();
+
     switch(closedir)
     {
        //close SW
         case 49:
+            m_currentMap->closeDoor(dpos.x-1, dpos.y+1);
             break;
         //close SOUTH
         case 258:
         case 50:
+            m_currentMap->closeDoor(dpos.x, dpos.y+1);
             break;
         //close SE
         case 51:
+            m_currentMap->closeDoor(dpos.x+1, dpos.y+1);
             break;
         //close WEST
         case 260:
         case 52:
+            m_currentMap->closeDoor(dpos.x-1, dpos.y);
             break;
         //close EAST
         case 261:
         case 54:
+            m_currentMap->closeDoor(dpos.x+1, dpos.y);
             break;
         //close NW
         case 55:
+            m_currentMap->closeDoor(dpos.x-1, dpos.y-1);
             break;
         //close NORTH
         case 259:
         case 56:
+            m_currentMap->closeDoor(dpos.x, dpos.y-1);
             break;
         //close NE
         case 57:
+            m_currentMap->closeDoor(dpos.x+1, dpos.y-1);
             break;
         default:
             break;

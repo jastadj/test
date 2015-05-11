@@ -110,7 +110,9 @@ MobInstance *Map::getMobAt(int x, int y)
 //
 void Map::closeDoor(ItemInstanceDoor *tdoor)
 {
+    if(tdoor == NULL) return;
 
+    tdoor->setDoorOpen(false);
 }
 
 void Map::closeDoor(int x, int y)
@@ -123,7 +125,8 @@ void Map::closeDoor(int x, int y)
         if(itemsat[i]->getType() == I_DOOR)
         {
             ItemInstanceDoor *tdoor = dynamic_cast<ItemInstanceDoor*>(itemsat[i]);
-            tdoor->setDoorOpen(false);
+
+            closeDoor(tdoor);
         }
     }
 }
