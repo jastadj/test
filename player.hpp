@@ -30,6 +30,7 @@ public:
     vector2i getPosition() { return m_Pos;}
     void setPosition(int x, int y) { m_Pos.x = x; m_Pos.y = y;}
     void setPosition(vector2i newpos) { m_Pos = newpos;}
+    void setMaxHP(int nmax) { m_MaxHP = nmax;}
 
     int getVisRadius() { return m_visRadius;}
     void setVisRadius(int nrad) { m_visRadius = nrad;}
@@ -38,7 +39,7 @@ public:
     void removeItem(ItemInstance *nitem);
     std::vector<ItemInstance*> *getInventory() { return &m_Inventory;}
 
-    int getAttackDamage() { return 1;}
+    int getAttackDamage() { return 2;}
     int getMaxHP() { return m_MaxHP;}
     int getCurrentHP() { return m_CurrentHP;}
     void addHP(int val);

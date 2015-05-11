@@ -5,7 +5,7 @@
 #include "common.hpp"
 #include <string>
 
-enum {AI_NONE, AI_WANDER, AI_ATTACKPLAYER};
+enum {AI_NONE, AI_WANDER, AI_ATTACKPLAYER, AI_HUNTPLAYER};
 
 class Mob
 {
@@ -15,6 +15,7 @@ private:
     chtype m_Character;
     int m_Color;
     int m_DefaultAIBehavior;
+    int m_AttackDamage;
 
     //stats
     int m_MaxHP;
@@ -27,10 +28,12 @@ public:
     chtype getCharacter() { return m_Character;}
     int getDefaultAIBehavior() { return m_DefaultAIBehavior;}
     int getColor() { return m_Color;}
+    int getAttackDamage() { return m_AttackDamage;}
 
     int getMaxHP() { return m_MaxHP;}
     void setMaxHP(int nmaxhp) { m_MaxHP = nmaxhp;}
     void setDefaultAIBehavior(int nai) { m_DefaultAIBehavior = nai;}
+    void setAttackDamage(int ndmg) { m_AttackDamage = ndmg;}
 };
 
 class MobInstance
@@ -61,6 +64,7 @@ public:
     int getAIBehavior() { return m_AIBehavior;}
     int getMaxHP() { return m_MobRef->getMaxHP();}
     int getCurrentHP() { return m_CurrentHP;}
+    int getAttackDamage() { return m_MobRef->getAttackDamage();}
     bool isDead() { if(m_CurrentHP <= 0) return true; else return false;}
 
 };

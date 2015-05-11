@@ -179,8 +179,14 @@ void Engine::initItems()
 void Engine::initMobs()
 {
     Mob newmob("rat", 'r', 1);
-    newmob.setMaxHP(3);
+    newmob.setMaxHP(1);
     newmob.setDefaultAIBehavior(AI_WANDER);
+    m_Mobs.push_back(newmob);
+
+    newmob = Mob("kobold", 'l', YELLOW);
+    newmob.setMaxHP(3);
+    newmob.setAttackDamage(1);
+    newmob.setDefaultAIBehavior(AI_HUNTPLAYER);
     m_Mobs.push_back(newmob);
 
 }
@@ -228,6 +234,8 @@ void Engine::initMap()
     //add test mob
     MobInstance *newmob = new MobInstance(&m_Mobs[0], 9,9);
     m_currentMap->addMob(newmob);
+    newmob = new MobInstance(&m_Mobs[1], 8,9);
+    m_currentMap->addMob(newmob);
 
     for(int i = 0; i < 5; i++)
     {
@@ -252,6 +260,8 @@ void Engine::initPlayer()
     m_Player->setVisRadius(12);
 
     m_Player->setName("test");
+    m_Player->setMaxHP(10);
+    m_Player->addHP(10);
     /*
     clear();
     echo();
@@ -904,6 +914,9 @@ void Engine::doMobTurn()
 
     for(int i = int(mobs->size()-1); i >= 0; i--)
     {
+        vector2i mobpos = (*mobs)[i]->getPosition();
+        vector2i plypos = m_Player->getPosition();
+
         //if mob is dead
         if( (*mobs)[i]->isDead())
         {
@@ -911,9 +924,36 @@ void Engine::doMobTurn()
             m_currentMap->removeMob( (*mobs)[i]);
         }
 
-        vector2i mobpos = (*mobs)[i]->getPosition();
-        vector2i plypos = m_Player->getPosition();
-        getAStarMapChunk(m_currentMap, 30, mobpos.x, mobpos.y, plypos.x, plypos.y);
+        //if hunting player, and player is in fov, set ai to attack player
+        else if( inFov(mobpos.x, mobpos.y, plypos.x, plypos.y)
+                && (*mobs)[i]->getAIBehavior() == AI_HUNTPLAYER)
+        {
+            (*mobs)[i]->setAIBehavior(AI_ATTACKPLAYER);
+        }
+
+        else if( (*mobs)[i]->getAIBehavior() == AI_ATTACKPLAYER)
+        {
+
+
+            std::vector< std::vector<int> > mchunk = getAStarMapChunk(m_currentMap, 30, mobpos.x, mobpos.y, plypos.x, plypos.y);
+
+            AStar mobstar(&mchunk, mobpos.x, mobpos.y, plypos.x, plypos.y);
+            std::vector< vector2i> testpath = mobstar.findPath();
+
+            if(!testpath.empty())
+            {
+                //if mob is adjacent to player
+                if(testpath.back().x == plypos.x && testpath.back().y == plypos.y)
+                {
+                    //attack player
+                    m_Player->addHP( -1*(*mobs)[i]->getAttackDamage());
+                }
+                else (*mobs)[i]->setPosition(testpath.back().x, testpath.back().y);
+            }
+
+
+        }
+
     }
 }
 

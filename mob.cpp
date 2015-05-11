@@ -15,6 +15,8 @@ Mob::Mob(std::string nname, chtype nchar, int ncolor)
     //set minimum max hp
     m_MaxHP = 1;
 
+    m_AttackDamage = 1;
+
 }
 
 Mob::~Mob()
