@@ -50,6 +50,8 @@ private:
     int m_Seed;
     std::vector<MapTile> m_Tiles;
     std::vector<Item*> m_Items;
+    Item* findItemByName(std::string iname); //item helper function
+    ItemInstance *createItemInstanceFromItem(Item *titem);
     std::vector<Mob> m_Mobs;
     std::vector<Map*> m_Maps;
     Map *m_currentMap;
@@ -81,4 +83,5 @@ public:
     Engine();
 
     void start();
+    int getSeed() { return m_Seed;}
 };

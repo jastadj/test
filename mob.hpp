@@ -5,6 +5,8 @@
 #include "common.hpp"
 #include <string>
 
+#include "loot.hpp"
+
 enum {AI_NONE, AI_WANDER, AI_ATTACKPLAYER, AI_HUNTPLAYER};
 
 class Mob
@@ -16,6 +18,9 @@ private:
     int m_Color;
     int m_DefaultAIBehavior;
     int m_AttackDamage;
+
+    //random loot generator
+    LootGenerator loot;
 
     //stats
     int m_MaxHP;
@@ -34,6 +39,9 @@ public:
     void setMaxHP(int nmaxhp) { m_MaxHP = nmaxhp;}
     void setDefaultAIBehavior(int nai) { m_DefaultAIBehavior = nai;}
     void setAttackDamage(int ndmg) { m_AttackDamage = ndmg;}
+    void setLootCap(int nlootcap);
+    void addLoot(Item *nitem, int findchance = 100);
+    std::vector<Item*> genLoot(int seed);
 };
 
 class MobInstance

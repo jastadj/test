@@ -162,12 +162,15 @@ void Engine::initTiles()
 
 void Engine::initItems()
 {
+    //item 0
     Item *newitem = new ItemGeneric("rock", '*', 1);
     m_Items.push_back(newitem);
 
+    //item 1
     newitem = new ItemGeneric("food", '%', YELLOW);
     m_Items.push_back(newitem);
 
+    //item 2
     newitem = new ItemDoor("door", chtype(219), YELLOW);
     newitem->setWalkable(false);
     newitem->setMovable(false);
@@ -183,10 +186,11 @@ void Engine::initMobs()
     newmob.setDefaultAIBehavior(AI_WANDER);
     m_Mobs.push_back(newmob);
 
-    newmob = Mob("kobold", 'l', YELLOW);
+    newmob = Mob("kobold", 'k', YELLOW);
     newmob.setMaxHP(3);
     newmob.setAttackDamage(1);
     newmob.setDefaultAIBehavior(AI_HUNTPLAYER);
+    newmob.addLoot(m_Items[1]);
     m_Mobs.push_back(newmob);
 
 }
@@ -234,7 +238,7 @@ void Engine::initMap()
     //add test mob
     MobInstance *newmob = new MobInstance(&m_Mobs[0], 9,9);
     m_currentMap->addMob(newmob);
-    newmob = new MobInstance(&m_Mobs[1], 8,9);
+    newmob = new MobInstance(&m_Mobs[1], 17,13);
     m_currentMap->addMob(newmob);
 
     for(int i = 0; i < 5; i++)
@@ -340,6 +344,21 @@ void Engine::mapDrawBox(Map *tmap, int x1, int y1, int x2, int y2, int tile)
 
         }
     }
+}
+
+ItemInstance *Engine::createItemInstanceFromItem(Item *titem)
+{
+    if(titem == NULL)
+    {
+        std::cout << "Unable to create item instance, item is null!\n";
+        return NULL;
+    }
+
+    left off here
+    /* to do
+    ability to create item instances with just an item pointer
+    have mobs create item instances upon death using loot generator
+    */
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -921,6 +940,15 @@ void Engine::doMobTurn()
         if( (*mobs)[i]->isDead())
         {
             addMessage(std::string( (*mobs)[i]->getName() + " dies"));
+
+            //generate loot from mob
+            std::vector<Item*> mloot = (*mobs)[i]->genLoot(m_Seed);
+
+            for(int m = 0; m < int(mloot.size()); m++)
+            {
+
+            }
+
             m_currentMap->removeMob( (*mobs)[i]);
         }
 
@@ -929,6 +957,12 @@ void Engine::doMobTurn()
                 && (*mobs)[i]->getAIBehavior() == AI_HUNTPLAYER)
         {
             (*mobs)[i]->setAIBehavior(AI_ATTACKPLAYER);
+
+            std::stringstream mobseestr;
+            mobseestr << (*mobs)[i]->getName() << " sees you!";
+
+            addMessage( mobseestr.str());
+
         }
 
         else if( (*mobs)[i]->getAIBehavior() == AI_ATTACKPLAYER)
@@ -947,6 +981,11 @@ void Engine::doMobTurn()
                 {
                     //attack player
                     m_Player->addHP( -1*(*mobs)[i]->getAttackDamage());
+
+                    std::stringstream mobhitstr;
+                    mobhitstr << (*mobs)[i]->getName() << " hits you for " << (*mobs)[i]->getAttackDamage() << " dmg";
+
+                    addMessage( mobhitstr.str());
                 }
                 else (*mobs)[i]->setPosition(testpath.back().x, testpath.back().y);
             }

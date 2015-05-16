@@ -68,6 +68,7 @@ protected:
 
 public:
     ItemInstance(Item *iref, int x, int y);
+    virtual ~ItemInstance();
     virtual int getType() = 0;
 
     vector2i getPosition() { return m_Position;}

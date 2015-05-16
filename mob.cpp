@@ -24,6 +24,21 @@ Mob::~Mob()
 
 }
 
+void Mob::setLootCap(int nlootcap)
+{
+    loot.setLootCap(nlootcap);
+}
+
+void Mob::addLoot(Item *nitem, int findchance)
+{
+    loot.addLoot(nitem, findchance);
+}
+
+std::vector<Item*> Mob::genLoot(int seed)
+{
+    return loot.generateLoot(seed);
+}
+
 ////////////////////////////////////////////////////////////////////
 //
 

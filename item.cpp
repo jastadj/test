@@ -32,6 +32,11 @@ ItemInstance::ItemInstance(Item *iref, int x, int y)
     m_Position.y = y;
 }
 
+ItemInstance::~ItemInstance()
+{
+
+}
+
 chtype ItemInstanceDoor::getCharacter()
 {
 
